@@ -2515,6 +2515,7 @@ sd_markdown_render(struct buf *ob, const uint8_t *document, size_t doc_size, str
 			bufputc(text, '\n');
 
 		parse_block(ob, md, text->data, text->size);
+		printf("%s", bufcstr(text)); // TODO: Marc: remove
 	}
 
 	if (md->cb.doc_footer)

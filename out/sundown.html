@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Sundown Test</title>
+  <style>
+  pre {
+    background-color: #ddd;
+    padding: 5px;
+  }
+  div {
+    background-color: #ffa;
+    padding: 5px;
+  }
+  </style>
+</head>
+<body>
+  <pre id='input1'>This _is_ **markdown** _**w00t**_</pre>
+  <div id='output1'></div>
+  <pre id='input2'>Sublist thingy
+
+- Item 1
+- Item 2
+  1. Item 2.1
+  2. Item 2.2
+- Item 3
+</pre>
+  <div id='output2'></div>
+  <pre id='input3'>Multi-list thingy
+
+- Item 1
+- Item 2
+
+1. Item A
+2. Item B
+3. Item C
+</pre>
+  <div id='output3'></div>
+  <script src='sundown.js'></script>
+  <script src='redcarpet.js'></script>
+  <script>
+    var r = new Redcarpet.Render.HTML()
+    var md = new Redcarpet.Markdown(r);
+
+    document.getElementById('output1').innerHTML = md.render(document.getElementById('input1').innerHTML);
+
+    document.getElementById('output2').innerHTML = md.render(document.getElementById('input2').innerHTML);
+
+    document.getElementById('output3').innerHTML = md.render(document.getElementById('input3').innerHTML);
+  </script>
+</body>
+</html>

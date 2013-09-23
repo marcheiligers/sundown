@@ -1,0 +1,3 @@
+emmake make -f Makefile.emcc
+emcc libsundown.so -o sundown.js -s EXPORTED_FUNCTIONS='["_sdhtml_renderer", "_sdhtml_toc_renderer", "_sdhtml_smartypants", "_bufgrow", "_bufnew", "_bufcstr", "_bufprefix", "_bufput ", "_bufputs", "_bufputc", "_bufrelease", "_bufreset", "_bufslurp", "_bufprintf", "_sd_markdown_new", "_sd_markdown_render", "_sd_markdown_free", "_sd_version", "_create_sd_callbacks", "_create_html_renderopt"]'
+cp sundown.js out/sundown.js
