@@ -27,9 +27,9 @@
 
   module('Simple');
   test('An empty document', function() {
-    contextOk('|', 'ROOT', 'before');
-    contextOk('  |', 'ROOT', 'before');
-    contextOk('\n|', 'ROOT', 'before');
+    contextOk('|', 'ROOT', 'start');
+    contextOk('  |', 'ROOT', 'start');
+    contextOk('\n|', 'ROOT', 'start');
   })
 
   test('P context', function() {
@@ -92,7 +92,7 @@
     contextOk('## |Heading 2', 'H2', 'text');
     contextOk('## H|eading 2', 'H2', 'text');
     contextOk('## Heading 2|', 'H2', 'text');
-    contextOk('## Heading 2\n|', 'ROOT', 'after');
+    contextOk('## Heading 2\n|', 'ROOT', 'end');
   })
 
   test('Underlined HEADING context', function() {
@@ -102,7 +102,7 @@
     contextOk('Heading 1\n|=========', 'H1', 'symbol');
     contextOk('Heading 1\n=|========', 'H1', 'symbol');
     contextOk('Heading 1\n=========|', 'H1', 'symbol');
-    contextOk('Heading 1\n=========\n|', 'ROOT', 'after');
+    contextOk('Heading 1\n=========\n|', 'ROOT', 'end');
   })
 
   test('Inline EM contexts', function() {
