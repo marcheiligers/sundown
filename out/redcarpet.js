@@ -46,6 +46,16 @@
   var HTML_ESCAPE       = (1 << 9)
   var HTML_PRETTIFY     = (1 << 10)
 
+  var MKDEXT_NO_INTRA_EMPHASIS = (1 << 0)
+  var MKDEXT_TABLES            = (1 << 1)
+  var MKDEXT_FENCED_CODE       = (1 << 2)
+  var MKDEXT_AUTOLINK          = (1 << 3)
+  var MKDEXT_STRIKETHROUGH     = (1 << 4)
+  var MKDEXT_SPACE_HEADERS     = (1 << 6)
+  var MKDEXT_SUPERSCRIPT       = (1 << 7)
+  var MKDEXT_LAX_SPACING       = (1 << 8)
+
+
   var Redcarpet = {}
   Redcarpet.Markdown = function(renderer, extensions) {
     if(!extensions) {

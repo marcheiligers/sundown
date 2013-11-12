@@ -3,3 +3,4 @@ libsundown.so*
 sundown
 smartypants
 *.exe
+.DS_Store

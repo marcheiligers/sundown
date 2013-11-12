@@ -3,18 +3,60 @@
 <head>
   <title>Sundown Test</title>
   <style>
-  pre {
-    background-color: #ddd;
-    padding: 5px;
+  body {
+    background: grey;
   }
-  div {
-    background-color: #ffa;
+  pre {
+    background-color: #eee;
     padding: 5px;
+    white-space: pre-wrap;
+    border-radius: 4px;
+  }
+  .result {
+    background-color: #ffc;
+    padding: 5px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+  }
+  .tree {
+    background-color: #ffc;
+    padding: 5px;
+    border-radius: 4px;
+  }
+  .pane {
+    position: absolute;
+    width: 49%;
+    background: white;
+    border-radius: 4px;
+    padding: 0.3%;
+  }
+  .left {
+    left: 0.3%;
+  }
+  .right {
+    right: 0.3%;
+  }
+  textarea {
+    width: 98%;
+    height: 150px;
+    padding: 5px;
+    border-radius: 4px;
+    border: 1px solid #eee;
+  }
+  span.cursor {
+    border-right: 2px solid red;
+  }
+  #output4-tree ul {
+    list-style-type: none;
+    margin: 0;
+  }
+  #output4-tree li {
+    margin-left: -30px;
   }
   </style>
 </head>
 <body>
-  <pre id='input1'>This _is_ **markdown** _**w00t**_</pre>
+<!--   <pre id='input1'>This _is_ **markdown** _**w00t**_</pre>
   <div id='output1'></div>
   <pre id='input2'>Sublist thingy
 
@@ -35,17 +77,65 @@
 3. Item C
 </pre>
   <div id='output3'></div>
+ -->
+  <div class='left pane'>
+    <textarea id='input4' onkeyup='convert()' onmouseup='convert()'></textarea><input type='button' onclick='convert()' value='Convert'>
+    <pre id='output4-html'></pre>
+    <pre id='output4-html-cursor'></pre>
+  </div>
+  <div class='right pane'>
+    <div id='output4' class='result'></div>
+    <div id='output4-tree' class='result'></div>
+  </div>
+
   <script src='sundown.js'></script>
   <script src='redcarpet.js'></script>
+  <script src='context.js'></script>
   <script>
     var r = new Redcarpet.Render.HTML()
-    var md = new Redcarpet.Markdown(r);
+    var md = new Redcarpet.Markdown(r, 65535);
 
-    document.getElementById('output1').innerHTML = md.render(document.getElementById('input1').innerHTML);
+    // document.getElementById('output1').innerHTML = md.render(document.getElementById('input1').innerHTML);
 
-    document.getElementById('output2').innerHTML = md.render(document.getElementById('input2').innerHTML);
+    // document.getElementById('output2').innerHTML = md.render(document.getElementById('input2').innerHTML);
 
-    document.getElementById('output3').innerHTML = md.render(document.getElementById('input3').innerHTML);
+    // document.getElementById('output3').innerHTML = md.render(document.getElementById('input3').innerHTML);
+
+    function escapeHtml(str) {
+      var div = document.createElement('div');
+      div.appendChild(document.createTextNode(str));
+      return div.innerHTML;
+    }
+
+    function convert() {
+      var input = document.getElementById('input4')
+          value = input.value,
+          actual = md.render(value);
+      document.getElementById('output4').innerHTML = actual;
+      document.getElementById('output4-html').innerHTML = escapeHtml(actual);
+      document.getElementById('output4-html-cursor').innerHTML = escapeHtml(md.render(value.slice(0, input.selectionStart) + '\u0001' + value.slice(input.selectionStart))).replace(/\u0001|%01/, '<span class="cursor"></span>');
+
+      var context = Context.context(md, value, input.selectionStart);
+      if(!context) {
+        document.getElementById("output4-tree").innerHTML = "Erm, I broke";
+      } else {
+        var tree = [ ],
+            node = context.node,
+            stack = [ context.position, node.nodeName ];
+
+        while(node = node.parentNode) {
+          stack.push(node.nodeName);
+        }
+        for(var i = 0, l = stack.length - 1; i < l; i++) {
+          tree.unshift("<ul><li>&rarr;" + stack[i]);
+          tree.push("</li></ul>");
+        }
+        document.getElementById("output4-tree").innerHTML = tree.join("");
+      }
+    }
+
+    document.getElementById('input4').focus();
+    convert();
   </script>
 </body>
 </html>
