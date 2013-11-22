@@ -56,72 +56,54 @@
               }
             }
             break;
-           case 'A':
+          case 'A':
             if(next[0] == '[') {
               return { node: a, position: 'text' }
             }
-            break; 
+            break;
         }
         return { node: an, position: 'symbol' };
       } else if(an.cloneNode(false).outerHTML != dn.cloneNode(false).outerHTML) {
         // the cursor is somewhere in the attributes (like the url of a link)
         return { node: an, position: 'attributes' };
       } else if(an.innerHTML != dn.innerHTML) {
-          switch(an.nodeName) {
-            case 'OL':
-              if(next == '. ' && prev.match(/\d+/)){
-                return { node: an, position: 'symbol' }
-              }
-              break;
-            case 'B':
-            if(prev == '<' && next == '/b'){
-              return { node: an, position: 'symbol' }
-            } else if (prev == '/' && next == 'b>'){
-              return { node: an, position: 'symbol' }
-            } else if (prev == 'b' && next[0] == '>') {
-              //TODO: This doesn't work since it loses the B when the cursor is between the last two characters of the closing tag
-              return { node: an, position: 'symbol' }
-            }
-            break;
-          case 'EM':
-            if(prev == '<' && next == '/e'){
-              return { node: an, position: 'symbol' }
-            } else if (prev == '/' && next == 'em'){
-              return { node: an, position: 'symbol' }
-            } else if (prev == 'e' && next == 'm>') {
-              return { node: an, position: 'symbol' }
-            } else if (prev == 'm' && next[0] == '>'){
-              return { node: an, position: 'symbol' }
-            }
-            break;
-          case 'I':
-            if(prev == '<' && next == '/i'){
-              return { node: an, position: 'symbol' }
-            } else if (prev == '/' && next == 'i>'){
-              return { node: an, position: 'symbol' }
-            } else if (prev == 'i' && next[0] == '>') {
-              //TODO: This doesn't work since it loses the B when the cursor is between the last two characters of the closing tag
-              return { node: an, position: 'symbol' }
-            }
-            break;          
-          case 'STRONG': //</strong>
-          if (prev == '<' && next == '/s'){
-            return { node: an, position: 'symbol' }
-          }else if (prev == '/' && next == 'st'){
-            return { node: an, position: 'symbol' }
-            //TODO: Need to find a way of dealing with text in the middle of the of this long tag
-          }else if (prev == 'n' && next == 'g>'){
-            return { node: an, position: 'symbol' }
-          }else if (prev == 'g' && next[0] == '>'){
-            return { node: an, position: 'symbol' }
-          }
-        }
         // the cursor is in the text or closing tag
+      switch(an.nodeName) {
+        case 'EM':
+        var nodeName = nodeNameAroundCursor(dn.outerHTML);
+        if(nodeName.toUpperCase() == an.nodeName) {
+          return { node: an, position: 'symbol' }
+        }
+
+        if (prev == '<' && next[0] == '/'){
+          return { node: an, position: 'symbol' }
+        } else if (prev == '/' && next == nodeName.slice(0,3)){
+          return { node: an, position: 'symbol' }
+        }
+        console.log(prev)
+        console.log(nodeName.slice(0,3))
+        break;
+      }
+        
+
         return child(an, dn, next, prev) || { node: an, position: 'text' };
       }
     }
     return null;
   }
+
+  function nodeNameAroundCursor(html) {
+    var temp = html.replace('&lt;', '<').replace('&gt;', '>'),
+        index = temp.indexOf('\u0001'),
+        before = temp.lastIndexOf('</', index),
+        after = temp.indexOf('>', index);
+
+    if(before >= -1 && after > -1) {
+      return temp.slice(before + 2, after);
+    }
+    return null;
+  }
+
 
   global.Context = {
     context: context
