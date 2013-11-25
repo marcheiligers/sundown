@@ -12,6 +12,7 @@
     if(!actual) {
       return { node: a, position: 'start' };
     } else {
+      console.log ("Going to child")
       return child(a, d, next, prev) || { node: a, position: 'end' };
     }
   }
@@ -21,8 +22,18 @@
       var an = a.childNodes[i],
           dn = d.childNodes[i];
 
+          console.log(an.nodeName)
+          console.log(dn.nodeName)
+          console.log(an.innerHTML)
+          console.log(dn.innerHTML)
+          /* if(next == 'm>' && prev == 'e') {
+              console.log("YEP YEP")
+              an.nodeName = dn.nodeName
+              return { node: an, position: 'EM' }
+            } */
+
       if(!dn || an.nodeName != dn.nodeName) {
-        // the cursor is possibly somewhere in opening/closing symbol
+        console.log('the cursor is possibly somewhere in opening/closing symbol')
         switch(an.nodeName) {
           case 'OL':
             if(next == '. ' && prev.match(/\d+/)){
@@ -45,7 +56,9 @@
               } else {
                 return { node: a, position: 'text' }
               }
-            }
+            } else if (next == '<e'){
+                return { node: a, position: 'text' }
+              }
             break;
           case 'STRONG':
             if(next[0] == ' ') {
@@ -64,27 +77,26 @@
         }
         return { node: an, position: 'symbol' };
       } else if(an.cloneNode(false).outerHTML != dn.cloneNode(false).outerHTML) {
-        // the cursor is somewhere in the attributes (like the url of a link)
+        console.log('the cursor is somewhere in the attributes (like the url of a link)')
         return { node: an, position: 'attributes' };
       } else if(an.innerHTML != dn.innerHTML) {
-        // the cursor is in the text or closing tag
+        console.log('the cursor is in the text or closing tag')
       switch(an.nodeName) {
         case 'EM':
         var nodeName = nodeNameAroundCursor(dn.outerHTML);
-        if(nodeName.toUpperCase() == an.nodeName) {
+        console.log('Outside')
+        console.log(an.nodeName)
+        if(nodeName == an.nodeName) {
+          return { node: an, position: 'symbol' }
+        }else if (prev == '<' && next[0] == '/'){
+          return { node: an, position: 'symbol' }
+        } else if (prev == '/' && next.toUpperCase() == an.nodeName){
+          console.log('Inside')
           return { node: an, position: 'symbol' }
         }
-
-        if (prev == '<' && next[0] == '/'){
-          return { node: an, position: 'symbol' }
-        } else if (prev == '/' && next == nodeName.slice(0,3)){
-          return { node: an, position: 'symbol' }
-        }
-        console.log(prev)
-        console.log(nodeName.slice(0,3))
+        console.log("end")
         break;
       }
-        
 
         return child(an, dn, next, prev) || { node: an, position: 'text' };
       }
@@ -99,7 +111,8 @@
         after = temp.indexOf('>', index);
 
     if(before >= -1 && after > -1) {
-      return temp.slice(before + 2, after);
+      var text =temp.slice(before + 2, after);
+      return text.toUpperCase();
     }
     return null;
   }

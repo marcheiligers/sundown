@@ -31,7 +31,7 @@
     contextOk('  |', 'ROOT', 'start');
     contextOk('\n|', 'ROOT', 'start');
   })
-
+/*
   test('P context', function() {
     contextOk('|paragraph', 'P', 'text');
     contextOk('p|aragraph', 'P', 'text');
@@ -46,8 +46,23 @@
     contextOk('*emphasized|*', 'EM', 'text');
     contextOk('*emphasized*|', 'P', 'text');
     contextOk('*emphasized*\n|', 'P', 'text');
-  })
+  }) */
 
+  test('HTML EM context', function() {
+    contextOk('|<em>emphasized</em>', 'P', 'text');
+    contextOk('<|em>emphasized</em>', 'EM', 'symbol');
+    contextOk('<em|>emphasized</em>', 'EM', 'symbol');
+    contextOk('<em>|emphasized</em>', 'EM', 'text');
+    contextOk('<em>e|mphasized</em>', 'EM', 'text');
+    contextOk('<em>emphasized|</em>', 'EM', 'text');
+    contextOk('<em>emphasized<|/em>', 'EM', 'symbol');
+    contextOk('<em>emphasized</|em>', 'EM', 'symbol');
+    contextOk('<em>emphasized</e|m>', 'EM', 'symbol');
+    contextOk('<em>emphasized</em|>', 'EM', 'symbol');
+    contextOk('<em>emphasized</em>|', 'P', 'text');
+    contextOk('<em>emphasized</em>\n|', 'P', 'text');
+  })
+/*
   test('STRONG context', function() {
     contextOk('|**strong**', 'P', 'text');
     contextOk('*|*strong**', 'STRONG', 'symbol');
@@ -120,7 +135,7 @@
     contextOk('paragraph *em|pha\nsized* paragraph', 'EM', 'text');
     contextOk('paragraph *empha\nsiz|ed* paragraph', 'EM', 'text');
     contextOk('paragraph *empha\nsized* parag|raph', 'P', 'text');
-  })
+  }) */
   </script>
 </body>
 </html>
