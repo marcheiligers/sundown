@@ -3,7 +3,7 @@
     var actual = renderer.render(markdown),
         diff = renderer.render(markdown.slice(0, cursor) + '\u0001' + markdown.slice(cursor));
         nodeName = nodeNameAroundCursor(diff)
-    if(nodeName == 'EM' || nodeName == 'STRONG' || nodeName == 'A'){
+    if(nodeName == 'EM' || nodeName == 'STRONG' || nodeName == 'A' || nodeName == 'I' || nodeName == 'B'){
       actual = renderer.render(markdown + 'a'),
       diff = renderer.render(markdown.slice(0, cursor) + '\u0001' + markdown.slice(cursor) + 'a');
       nodeName = nodeNameAroundCursor(diff)
@@ -83,6 +83,16 @@
               return { node: a, position: 'text' }
             }
             break;
+          case 'I':
+           if (next == '<i' && prev == '') {
+              return { node: a, position: 'text' }
+            }
+            break;
+          case 'B':
+           if (next == '<b' && prev == '') {
+              return { node: a, position: 'text' }
+            }
+            break;
         }
         return { node: an, position: 'symbol' };
       } else if(an.cloneNode(false).outerHTML != dn.cloneNode(false).outerHTML) {
@@ -112,6 +122,20 @@
         }else if (prev == '<' && next == '/a'){
           return { node: an, position: 'symbol' }
         } else if (prev == 'a' && next[0] == '>'){
+          return { node: an, position: 'symbol' }
+        }
+        break;
+        case 'I':
+        if(nodeName == an.nodeName) {
+          return { node: an, position: 'symbol' }
+        }else if (prev == '<' && next == '/i'){
+          return { node: an, position: 'symbol' }
+        }
+        break;
+        case 'B':
+        if(nodeName == an.nodeName) {
+          return { node: an, position: 'symbol' }
+        }else if (prev == '<' && next == '/b'){
           return { node: an, position: 'symbol' }
         }
         break;

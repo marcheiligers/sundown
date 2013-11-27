@@ -48,6 +48,28 @@
     contextOk('*emphasized*\n|', 'P', 'text');
   })
 
+  test('I HTML context', function() {
+    contextOk('|<i>Italic</i>', 'P', 'text');
+    contextOk('*<|i>Italic</i>', 'I', 'symbol');
+    contextOk('<i>Ita|lic</i>', 'I', 'text');
+    contextOk('<i>Italic<|/i>', 'I', 'symbol');
+    contextOk('<i>Italic</|i>', 'I', 'symbol');
+    contextOk('<i>Italic</i|>', 'I', 'symbol');
+    contextOk('<i>Italic</i>|', 'P', 'text');
+    contextOk('<i>Italic</i>\n|', 'P', 'text');
+  })
+
+  test('B HTML context', function() {
+    contextOk('|<b>Bold</b>', 'P', 'text');
+    contextOk('<|b>Bold</b>', 'B', 'symbol');
+    contextOk('<b>Bo|ld</b>', 'B', 'text');
+    contextOk('<b>Bold<|/b>', 'B', 'symbol');
+    contextOk('<b>Bold</|b>', 'B', 'symbol');
+    contextOk('<b>Bold</b|>', 'B', 'symbol');
+    contextOk('<b>Bold</b>|', 'P', 'text');
+    contextOk('|<b>Bold</b>\n|', 'P', 'text');
+  })
+
   test('HTML EM context', function() {
     contextOk('|<em>emphasized</em>', 'P', 'text');
     contextOk('<|em>emphasized</em>', 'EM', 'symbol');
@@ -74,7 +96,7 @@
     contextOk('**strong**\n|', 'P', 'text');
   })
 
-    test('HTML STRONG context', function() {
+  test('HTML STRONG context', function() {
     contextOk('|<strong>strong</strong>', 'P', 'text');
     contextOk('<|strong>strong</strong>', 'STRONG', 'symbol');
     contextOk('<strong|>strong</strong>', 'STRONG', 'symbol');
@@ -130,6 +152,22 @@
     contextOk("<a href='http://street.com'>Fascination</a|>",  'A', 'symbol');
     contextOk("<a href='http://street.com'>Fascination</a>|",  'P', 'text');
     contextOk("<a href='http://street.com'>Fascination</a>\n|",  'P', 'text');
+  })
+
+  test('HTML B context', function() {
+    contextOk('|<strong>strong</strong>', 'P', 'text');
+    contextOk('<|strong>strong</strong>', 'STRONG', 'symbol');
+    contextOk('<strong|>strong</strong>', 'STRONG', 'symbol');
+    contextOk('<strong>|strong</em>', 'STRONG', 'text');
+    contextOk('<strong>e|mphasized</em>', 'STRONG', 'text');
+    contextOk('<strong>strong|</em>', 'STRONG', 'text');
+    contextOk('<strong>strong<|/strong>', 'STRONG', 'symbol');
+    contextOk('<strong>strong</|strong>', 'STRONG', 'symbol');
+    contextOk('<strong>strong</s|trong>', 'STRONG', 'symbol');
+    contextOk('<strong>strong</stron|g>', 'STRONG', 'symbol');
+    contextOk('<strong>strong</strong|>', 'STRONG', 'symbol');
+    contextOk('<strong>strong</strong>|', 'P', 'text');
+    contextOk('<strong>strong</strong>\n|', 'P', 'text');
   })
 
   test('HEADING context', function() {
