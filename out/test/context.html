@@ -25,102 +25,121 @@
     equal(ctx.position, position, 'Got position ' + ctx.position + ', expected position ' + position + ' for ' + markdown);
   }
 
-  module('Simple');
-  test('An empty document', function() {
-    contextOk('|', 'ROOT', 'start');
-    contextOk('  |', 'ROOT', 'start');
-    contextOk('\n|', 'ROOT', 'start');
+  // module('Simple');
+  // test('An empty document', function() {
+  //   contextOk('|', 'ROOT', 'start');
+  //   contextOk('  |', 'ROOT', 'start');
+  //   contextOk('\n|', 'ROOT', 'start');
+  // })
+
+  // test('P context', function() {
+  //   contextOk('|paragraph', 'P', 'text');
+  //   contextOk('p|aragraph', 'P', 'text');
+  //   contextOk('paragraph|', 'P', 'text');
+  //   contextOk('paragraph\n|', 'P', 'text');
+  // })
+
+  // test('EM context', function() {
+  //   contextOk('|*emphasized*', 'P', 'text');
+  //   contextOk('*|emphasized*', 'EM', 'text');
+  //   contextOk('*e|mphasized*', 'EM', 'text');
+  //   contextOk('*emphasized|*', 'EM', 'text');
+  //   contextOk('*emphasized*|', 'P', 'text');
+  //   contextOk('*emphasized*\n|', 'P', 'text');
+  // })
+
+  // test('STRONG context', function() {
+  //   contextOk('|**strong**', 'P', 'text');
+  //   contextOk('*|*strong**', 'STRONG', 'symbol');
+  //   contextOk('**|strong**', 'STRONG', 'text');
+  //   contextOk('**s|trong**', 'STRONG', 'text');
+  //   contextOk('**strong|**', 'STRONG', 'text');
+  //   contextOk('**strong*|*', 'STRONG', 'symbol');
+  //   contextOk('**strong**|', 'P', 'text');
+  //   contextOk('**strong**\n|', 'P', 'text');
+  // })
+
+  // test('EM+STRONG context', function() {
+  //   contextOk('|***emphasized-strong***', 'P', 'text');
+  //   contextOk('*|**emphasized-strong***', 'STRONG', 'symbol');
+  //   contextOk('**|*emphasized-strong***', 'STRONG', 'text');
+  //   contextOk('***|emphasized-strong***', 'EM', 'text');
+  //   contextOk('***e|mphasized-strong***', 'EM', 'text');
+  //   contextOk('***emphasized-strong|***', 'EM', 'text');
+  //   contextOk('***emphasized-strong*|**', 'STRONG', 'text');
+  //   contextOk('***emphasized-strong**|*', 'STRONG', 'symbol');
+  //   contextOk('***emphasized-strong***|', 'P', 'text');
+  //   contextOk('***emphasized-strong***\n|', 'P', 'text');
+  // })
+
+  // test('A context', function() {
+  //   contextOk('|[Fascination](http://street.com)', 'P', 'text');
+  //   contextOk('[|Fascination](http://street.com)', 'A', 'text');
+  //   contextOk('[F|ascination](http://street.com)', 'A', 'text');
+  //   contextOk('[Fascination|](http://street.com)', 'A', 'text');
+  //   contextOk('[Fascination]|(http://street.com)', 'A', 'symbol');
+  //   contextOk('[Fascination](|http://street.com)', 'A', 'attributes');
+  //   contextOk('[Fascination](h|ttp://street.com)', 'A', 'attributes');
+  //   contextOk('[Fascination](http://street.com|)', 'A', 'attributes');
+  //   contextOk('[Fascination](http://street.com)|', 'P', 'text');
+  //   contextOk('[Fascination](http://street.com)\n|', 'P', 'text');
+  // })
+
+  // test('HEADING context', function() {
+  //   contextOk('|## Heading 2', 'H2', 'symbol');
+  //   contextOk('#|# Heading 2', 'H2', 'symbol');
+  //   contextOk('##| Heading 2', 'H2', 'symbol');
+  //   contextOk('## |Heading 2', 'H2', 'text');
+  //   contextOk('## H|eading 2', 'H2', 'text');
+  //   contextOk('## Heading 2|', 'H2', 'text');
+  //   contextOk('## Heading 2\n|', 'ROOT', 'end');
+  // })
+
+  // test('Underlined HEADING context', function() {
+  //   contextOk('|Heading 1\n=========', 'H1', 'text');
+  //   contextOk('H|eading 1\n=========', 'H1', 'text');
+  //   contextOk('Heading 1|\n=========', 'H1', 'text');
+  //   contextOk('Heading 1\n|=========', 'H1', 'symbol');
+  //   contextOk('Heading 1\n=|========', 'H1', 'symbol');
+  //   contextOk('Heading 1\n=========|', 'H1', 'symbol');
+  //   contextOk('Heading 1\n=========\n|', 'ROOT', 'end');
+  // })
+
+  // test('Inline EM contexts', function() {
+  //   contextOk('|paragraph *emphasized* paragraph', 'P', 'text');
+  //   contextOk('p|aragraph *emphasized* paragraph', 'P', 'text');
+  //   contextOk('paragraph |*emphasized* paragraph', 'P', 'text');
+  //   contextOk('paragraph *|emphasized* paragraph', 'EM', 'text');
+  //   contextOk('paragraph *e|mphasized* paragraph', 'EM', 'text');
+  //   contextOk('paragraph *emphasized|* paragraph', 'EM', 'text');
+  //   contextOk('paragraph *emphasized*| paragraph', 'P', 'text');
+  //   contextOk('paragraph *emphasized* paragraph|', 'P', 'text');
+  //   contextOk('paragraph *emphasized* paragraph\n|', 'P', 'text');
+  //   contextOk('paragraph *emphasized*|\n paragraph', 'P', 'text');
+  //   contextOk('paragraph *emphasized*\n| paragraph', 'P', 'text');
+  //   contextOk('paragraph *em|pha\nsized* paragraph', 'EM', 'text');
+  //   contextOk('paragraph *empha\nsiz|ed* paragraph', 'EM', 'text');
+  //   contextOk('paragraph *empha\nsized* parag|raph', 'P', 'text');
+  // })
+
+  module('HTML Elements')
+  test('Inline HTML Elements', function() {
+    // contextOk('<|strong>Strong</strong>', 'STRONG', 'symbol');
+    // contextOk('<str|ong>Strong</strong>', 'STRONG', 'symbol');
+    // contextOk('<strong|>Strong</strong>', 'STRONG', 'symbol');
+    // contextOk('<strong>St|rong</strong>', 'STRONG', 'text');
+    // contextOk('<strong>Strong<|/strong>', 'STRONG', 'symbol');
+    // contextOk('<strong>Strong</|strong>', 'STRONG', 'symbol');
+    contextOk('<strong>Strong</str|ong>', 'STRONG', 'symbol');
+    // contextOk('<strong>Strong</strong|>', 'STRONG', 'symbol');
   })
 
-  test('P context', function() {
-    contextOk('|paragraph', 'P', 'text');
-    contextOk('p|aragraph', 'P', 'text');
-    contextOk('paragraph|', 'P', 'text');
-    contextOk('paragraph\n|', 'P', 'text');
-  })
-
-  test('EM context', function() {
-    contextOk('|*emphasized*', 'P', 'text');
-    contextOk('*|emphasized*', 'EM', 'text');
-    contextOk('*e|mphasized*', 'EM', 'text');
-    contextOk('*emphasized|*', 'EM', 'text');
-    contextOk('*emphasized*|', 'P', 'text');
-    contextOk('*emphasized*\n|', 'P', 'text');
-  })
-
-  test('STRONG context', function() {
-    contextOk('|**strong**', 'P', 'text');
-    contextOk('*|*strong**', 'STRONG', 'symbol');
-    contextOk('**|strong**', 'STRONG', 'text');
-    contextOk('**s|trong**', 'STRONG', 'text');
-    contextOk('**strong|**', 'STRONG', 'text');
-    contextOk('**strong*|*', 'STRONG', 'symbol');
-    contextOk('**strong**|', 'P', 'text');
-    contextOk('**strong**\n|', 'P', 'text');
-  })
-
-  test('EM+STRONG context', function() {
-    contextOk('|***emphasized-strong***', 'P', 'text');
-    contextOk('*|**emphasized-strong***', 'STRONG', 'symbol');
-    contextOk('**|*emphasized-strong***', 'STRONG', 'text');
-    contextOk('***|emphasized-strong***', 'EM', 'text');
-    contextOk('***e|mphasized-strong***', 'EM', 'text');
-    contextOk('***emphasized-strong|***', 'EM', 'text');
-    contextOk('***emphasized-strong*|**', 'STRONG', 'text');
-    contextOk('***emphasized-strong**|*', 'STRONG', 'symbol');
-    contextOk('***emphasized-strong***|', 'P', 'text');
-    contextOk('***emphasized-strong***\n|', 'P', 'text');
-  })
-
-  test('A context', function() {
-    contextOk('|[Fascination](http://street.com)', 'P', 'text');
-    contextOk('[|Fascination](http://street.com)', 'A', 'text');
-    contextOk('[F|ascination](http://street.com)', 'A', 'text');
-    contextOk('[Fascination|](http://street.com)', 'A', 'text');
-    contextOk('[Fascination]|(http://street.com)', 'A', 'symbol');
-    contextOk('[Fascination](|http://street.com)', 'A', 'attributes');
-    contextOk('[Fascination](h|ttp://street.com)', 'A', 'attributes');
-    contextOk('[Fascination](http://street.com|)', 'A', 'attributes');
-    contextOk('[Fascination](http://street.com)|', 'P', 'text');
-    contextOk('[Fascination](http://street.com)\n|', 'P', 'text');
-  })
-
-  test('HEADING context', function() {
-    contextOk('|## Heading 2', 'H2', 'symbol');
-    contextOk('#|# Heading 2', 'H2', 'symbol');
-    contextOk('##| Heading 2', 'H2', 'symbol');
-    contextOk('## |Heading 2', 'H2', 'text');
-    contextOk('## H|eading 2', 'H2', 'text');
-    contextOk('## Heading 2|', 'H2', 'text');
-    contextOk('## Heading 2\n|', 'ROOT', 'end');
-  })
-
-  test('Underlined HEADING context', function() {
-    contextOk('|Heading 1\n=========', 'H1', 'text');
-    contextOk('H|eading 1\n=========', 'H1', 'text');
-    contextOk('Heading 1|\n=========', 'H1', 'text');
-    contextOk('Heading 1\n|=========', 'H1', 'symbol');
-    contextOk('Heading 1\n=|========', 'H1', 'symbol');
-    contextOk('Heading 1\n=========|', 'H1', 'symbol');
-    contextOk('Heading 1\n=========\n|', 'ROOT', 'end');
-  })
-
-  test('Inline EM contexts', function() {
-    contextOk('|paragraph *emphasized* paragraph', 'P', 'text');
-    contextOk('p|aragraph *emphasized* paragraph', 'P', 'text');
-    contextOk('paragraph |*emphasized* paragraph', 'P', 'text');
-    contextOk('paragraph *|emphasized* paragraph', 'EM', 'text');
-    contextOk('paragraph *e|mphasized* paragraph', 'EM', 'text');
-    contextOk('paragraph *emphasized|* paragraph', 'EM', 'text');
-    contextOk('paragraph *emphasized*| paragraph', 'P', 'text');
-    contextOk('paragraph *emphasized* paragraph|', 'P', 'text');
-    contextOk('paragraph *emphasized* paragraph\n|', 'P', 'text');
-    contextOk('paragraph *emphasized*|\n paragraph', 'P', 'text');
-    contextOk('paragraph *emphasized*\n| paragraph', 'P', 'text');
-    contextOk('paragraph *em|pha\nsized* paragraph', 'EM', 'text');
-    contextOk('paragraph *empha\nsiz|ed* paragraph', 'EM', 'text');
-    contextOk('paragraph *empha\nsized* parag|raph', 'P', 'text');
-  })
+  // test('Nested Inlien HTML Elements', function() {
+  //   contextOk('<strong><em>Strong Emphasized</em><|/strong>', 'STRONG', 'symbol');
+  //   contextOk('<strong><em>Strong Emphasized</em></s|trong>', 'STRONG', 'symbol');
+  //   contextOk('<strong><em>Strong Emphasized</|em></strong>', 'EM', 'symbol');
+  //   contextOk('<strong><em>Strong Emphasized<|/em></strong>', 'EM', 'symbol');
+  // })
   </script>
 </body>
 </html>

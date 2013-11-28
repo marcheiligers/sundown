@@ -1,8 +1,13 @@
 (function(global) {
+  // var CURSOR = '\u0001';
+  var CURSOR = 'XXCURSORXX';
+
   function context(renderer, markdown, cursor) {
     var actual = renderer.render(markdown),
-        diff = renderer.render(markdown.slice(0, cursor) + '\u0001' + markdown.slice(cursor));
-
+        diff = renderer.render(markdown.slice(0, cursor) + CURSOR + markdown.slice(cursor));
+        cnode = nodeNameAroundCursor(diff);
+    console.log('actual', actual)
+    console.log('diff', diff.replace(CURSOR, '|'))
     var a = document.createElement('root'), d = document.createElement('root');
     a.innerHTML = actual;
     d.innerHTML = diff;
@@ -13,18 +18,27 @@
     if(!actual) {
       return { node: a, position: 'start' };
     } else {
-      return child(a, d, next, prev) || { node: a, position: 'end' };
+      return child(a, d, next, prev, cnode) || { node: a, position: 'end' };
     }
 
   }
 
-  function child(a, d, next, prev) {
+  function child(a, d, next, prev, cnode) {
+    console.log('-> child', a.nodeName, d.nodeName)
+
     for(var i = 0, l = a.childNodes.length; i < l; i++) {
       var an = a.childNodes[i],
           dn = d.childNodes[i];
 
+      console.log('--> for:', i, an.nodeName, dn.nodeName);
+      console.log('       :', i, an.innerHTML, dn.innerHTML, an.innerHTML == dn.innerHTML);
       if(!dn || an.nodeName != dn.nodeName) {
         // the cursor is possibly somewhere in opening/closing symbol
+        console.log('the cursor is possibly somewhere in opening/closing symbol', a.nodeName, an.parentNode.nodeName, an.nodeName, dn.nodeName, cnode)
+        if(cnode == dn.nodeName) {
+          return { node: an.parentNode, position: 'symbol' };
+        }
+
         switch(an.nodeName) {
           case 'OL':
           case 'UL':
@@ -61,11 +75,34 @@
         return { node: an, position: 'symbol' };
       } else if(an.cloneNode(false).outerHTML != dn.cloneNode(false).outerHTML) {
         // the cursor is somewhere in the attributes (like the url of a link)
+        console.log('the cursor is somewhere in the attributes (like the url of a link)')
         return { node: an, position: 'attributes' };
       } else if(an.innerHTML != dn.innerHTML) {
-        // the cursor is in the text somewhere somewhere
-        return child(an, dn, next, prev) || { node: an, position: 'text' };
+        // the cursor is in the text somewhere or in a closing tag
+        var ch = child(an, dn, next, prev, cnode);
+        console.log('the cursor is in the text somewhere or in a closing tag')
+        if(ch) {
+          return ch;
+        } else if(cnode == an.nodeName) {
+          return { node: an, position: 'symbol' };
+        } else {
+          return { node: an, position: 'text' };
+        }
       }
+    }
+    return null;
+  }
+
+  function nodeNameAroundCursor(html) {
+    var temp = html.replace('&lt;', '<').replace('&gt;', '>'),
+        index = temp.indexOf(CURSOR),
+        before = temp.lastIndexOf('<', index),
+        after = temp.indexOf('>', index);
+
+    if(before >= -1 && after > -1) {
+      var text =temp.slice(before + 2, after);
+          text = text.replace(CURSOR, '');
+      return text.replace('/', '').toUpperCase();
     }
     return null;
   }
