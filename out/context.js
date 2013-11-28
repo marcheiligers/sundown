@@ -101,6 +101,9 @@
       } else if(an.innerHTML != dn.innerHTML) {
         console.log('the cursor is in the text or closing tag')
         var nodeName = nodeNameAroundCursor(dn.outerHTML);
+        console.log(nodeName)
+        console.log(an.innerHTML.length)
+        console.log(dn.innerHTML.length)
       switch(an.nodeName) {
         case 'EM':
         if(nodeName == an.nodeName) {
@@ -119,23 +122,24 @@
         case 'A':
         if(nodeName == an.nodeName) {
           return { node: an, position: 'symbol' }
-        }else if (prev == '<' && next == '/a'){
+        }else if (prev == '<' && next[0] == '/'){
           return { node: an, position: 'symbol' }
         } else if (prev == 'a' && next[0] == '>'){
           return { node: an, position: 'symbol' }
         }
         break;
         case 'I':
+        console.log("TEST")
         if(nodeName == an.nodeName) {
           return { node: an, position: 'symbol' }
-        }else if (prev == '<' && next == '/i'){
+        }else if (prev == '<' && next[0] == '/'){
           return { node: an, position: 'symbol' }
         }
         break;
         case 'B':
         if(nodeName == an.nodeName) {
           return { node: an, position: 'symbol' }
-        }else if (prev == '<' && next == '/b'){
+        }else if (prev == '<' && next[0] == '/'){
           return { node: an, position: 'symbol' }
         }
         break;
@@ -147,7 +151,7 @@
         } else if (prev == '/' && next.toUpperCase() == nodeName.slice(0,2)){ 
           return { node: an, position: 'symbol' }
         }
-        break; 
+        break;
       }
         return child(an, dn, next, prev) || { node: an, position: 'text' };
       }
