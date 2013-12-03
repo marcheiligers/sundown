@@ -97,18 +97,18 @@
    })
 
 
-  // test('A context', function() {
-  //   contextOk('|[Fascination](http://street.com)', 'P', 'text');
-  //   contextOk('[|Fascination](http://street.com)', 'A', 'text');
-  //   contextOk('[F|ascination](http://street.com)', 'A', 'text');
-  //   contextOk('[Fascination|](http://street.com)', 'A', 'text');
-  //   contextOk('[Fascination]|(http://street.com)', 'A', 'symbol');
-  //   contextOk('[Fascination](|http://street.com)', 'A', 'attributes');
-  //   contextOk('[Fascination](h|ttp://street.com)', 'A', 'attributes');
-  //   contextOk('[Fascination](http://street.com|)', 'A', 'attributes');
-  //   contextOk('[Fascination](http://street.com)|', 'P', 'text');
-  //   contextOk('[Fascination](http://street.com)\n|', 'P', 'text');
-  // })
+   test('A context', function() {
+     contextOk('|[Fascination](http://street.com)', 'P', 'text');
+     contextOk('[|Fascination](http://street.com)', 'A', 'text');
+     contextOk('[F|ascination](http://street.com)', 'A', 'text');
+     contextOk('[Fascination|](http://street.com)', 'A', 'text');
+     contextOk('[Fascination]|(http://street.com)', 'A', 'symbol');
+     contextOk('[Fascination](|http://street.com)', 'A', 'attributes');
+     contextOk('[Fascination](h|ttp://street.com)', 'A', 'attributes');
+     contextOk('[Fascination](http://street.com|)', 'A', 'attributes');
+     contextOk('[Fascination](http://street.com)|', 'P', 'text');
+     contextOk('[Fascination](http://street.com)\n|', 'P', 'text');
+   })
   
   test('HEADING context', function() {
     contextOk('|## Heading 2', 'H2', 'symbol');

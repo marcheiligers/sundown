@@ -5,13 +5,16 @@
   function context(renderer, markdown, cursor) {
     var actual = renderer.render(markdown),
         diff = renderer.render(markdown.slice(0, cursor) + CURSOR + markdown.slice(cursor));
-        cnode = nodeNameAroundCursor(diff);
-        after = markdown.slice(cursor)
+        cnode = nodeNameAroundCursor(diff)
 
-      if(cnode == 'EM' || cnode == 'STRONG' || cnode == 'A' || cnode == 'I' || cnode == 'B'){
-        markdown = markdown.replace(/(<\/.*?>)/g, '$1' + 'a')
-        actual = renderer.render(markdown),
-        diff = renderer.render(markdown.slice(0, cursor) + CURSOR + markdown.slice(cursor));
+        inlineElements = ["address", "article", "aside", "audio", "blockquote", "canvas", "dd", "dl", "fieldset", "figcaption", "figure", "footer", "form", "h1", "h2", "h3", "h4", "h5", "h6", "header", "hgroup", "hr", "noscript", "ol", "output", "p", "pre", "section", "table", "tfoot", "ul", "video"];
+        isBlock = inlineElements.indexOf(cnode.toLowerCase()) > -1
+
+      if(!isBlock && cnode.indexOf('<') == -1){
+        newMarkdown = markdown.replace(/(<\/.*?>)/g, '$1' + 'a')
+        newMarkdown = newMarkdown.replace(/(<\/[o|u]l>)a/g, '$1')
+        actual = renderer.render(newMarkdown),
+        diff = renderer.render(newMarkdown.slice(0, cursor) + CURSOR + newMarkdown.slice(cursor));
         cnode = nodeNameAroundCursor(diff)
       }
 
@@ -118,6 +121,8 @@
         } else if(cnode == an.nodeName) {
           return { node: an, position: 'symbol' };
         } else {
+          console.log("prev", prev)
+          console.log("next[0]", next[0])
           if (prev == '<' && next[0] == '/') {
             return { node: an, position: 'symbol' };
           } else {
