@@ -25,38 +25,155 @@
     equal(ctx.position, position, 'Got position ' + ctx.position + ', expected position ' + position + ' for ' + markdown);
   }
 
-  module('Simple');
-  test('An empty document', function() {
-    contextOk('|', 'ROOT', 'start');
-    contextOk('  |', 'ROOT', 'start');
-    contextOk('\n|', 'ROOT', 'start');
+   module('Simple');
+   test('An empty document', function() {
+     contextOk('|', 'ROOT', 'start');
+     contextOk('  |', 'ROOT', 'start');
+     contextOk('\n|', 'ROOT', 'start');
+   })
+
+   test('P context', function() {
+     contextOk('|paragraph', 'P', 'text');
+     contextOk('p|aragraph', 'P', 'text');
+     contextOk('paragraph|', 'P', 'text');
+     contextOk('paragraph\n|', 'P', 'text');
+   })
+
+   test('EM context', function() {
+     contextOk('|*emphasized*', 'P', 'text');
+     contextOk('*|emphasized*', 'EM', 'text');
+     contextOk('*e|mphasized*', 'EM', 'text');
+     contextOk('*emphasized|*', 'EM', 'text');
+     contextOk('*emphasized*|', 'P', 'text');
+     contextOk('*emphasized*\n|', 'P', 'text');
+   })
+
+  test('STRONG context', function() {
+    contextOk('|**strong**', 'P', 'text');
+    contextOk('*|*strong**', 'STRONG', 'symbol');
+    contextOk('**|strong**', 'STRONG', 'text');
+    contextOk('**s|trong**', 'STRONG', 'text');
+    contextOk('**strong|**', 'STRONG', 'text');
+    contextOk('**strong*|*', 'STRONG', 'symbol');
+    contextOk('**strong**|', 'P', 'text');
+    contextOk('**strong**\n|', 'P', 'text');
   })
 
-  test('P context', function() {
-    contextOk('|paragraph', 'P', 'text');
-    contextOk('p|aragraph', 'P', 'text');
-    contextOk('paragraph|', 'P', 'text');
-    contextOk('paragraph\n|', 'P', 'text');
+  test('EM+STRONG context', function() {
+    contextOk('|***emphasized-strong***', 'P', 'text');
+    contextOk('*|**emphasized-strong***', 'STRONG', 'symbol');
+    contextOk('**|*emphasized-strong***', 'STRONG', 'text');
+    contextOk('***|emphasized-strong***', 'EM', 'text');
+    contextOk('***e|mphasized-strong***', 'EM', 'text');
+    contextOk('***emphasized-strong|***', 'EM', 'text');
+    contextOk('***emphasized-strong*|**', 'STRONG', 'text');
+    contextOk('***emphasized-strong**|*', 'STRONG', 'symbol');
+    contextOk('***emphasized-strong***|', 'P', 'text');
+    contextOk('***emphasized-strong***\n|', 'P', 'text');
   })
 
-  test('EM context', function() {
-    contextOk('|*emphasized*', 'P', 'text');
-    contextOk('*|emphasized*', 'EM', 'text');
-    contextOk('*e|mphasized*', 'EM', 'text');
-    contextOk('*emphasized|*', 'EM', 'text');
-    contextOk('*emphasized*|', 'P', 'text');
-    contextOk('*emphasized*\n|', 'P', 'text');
+   test('STRONG context', function() {
+     contextOk('|**strong**', 'P', 'text');
+     contextOk('*|*strong**', 'STRONG', 'symbol');
+     contextOk('**|strong**', 'STRONG', 'text');
+     contextOk('**s|trong**', 'STRONG', 'text');
+     contextOk('**strong|**', 'STRONG', 'text');
+     contextOk('**strong*|*', 'STRONG', 'symbol');
+     contextOk('**strong**|', 'P', 'text');
+     contextOk('**strong**\n|', 'P', 'text');
+   })
+
+   test('EM+STRONG context', function() {
+     contextOk('|***emphasized-strong***', 'P', 'text');
+     contextOk('*|**emphasized-strong***', 'STRONG', 'symbol');
+     contextOk('**|*emphasized-strong***', 'STRONG', 'text');
+     contextOk('***|emphasized-strong***', 'EM', 'text');
+     contextOk('***e|mphasized-strong***', 'EM', 'text');
+     contextOk('***emphasized-strong|***', 'EM', 'text');
+     contextOk('***emphasized-strong*|**', 'STRONG', 'text');
+     contextOk('***emphasized-strong**|*', 'STRONG', 'symbol');
+     contextOk('***emphasized-strong***|', 'P', 'text');
+     contextOk('***emphasized-strong***\n|', 'P', 'text');
+   })
+
+
+  // test('A context', function() {
+  //   contextOk('|[Fascination](http://street.com)', 'P', 'text');
+  //   contextOk('[|Fascination](http://street.com)', 'A', 'text');
+  //   contextOk('[F|ascination](http://street.com)', 'A', 'text');
+  //   contextOk('[Fascination|](http://street.com)', 'A', 'text');
+  //   contextOk('[Fascination]|(http://street.com)', 'A', 'symbol');
+  //   contextOk('[Fascination](|http://street.com)', 'A', 'attributes');
+  //   contextOk('[Fascination](h|ttp://street.com)', 'A', 'attributes');
+  //   contextOk('[Fascination](http://street.com|)', 'A', 'attributes');
+  //   contextOk('[Fascination](http://street.com)|', 'P', 'text');
+  //   contextOk('[Fascination](http://street.com)\n|', 'P', 'text');
+  // })
+  
+  test('HEADING context', function() {
+    contextOk('|## Heading 2', 'H2', 'symbol');
+    contextOk('#|# Heading 2', 'H2', 'symbol');
+    contextOk('##| Heading 2', 'H2', 'symbol');
+    contextOk('## |Heading 2', 'H2', 'text');
+    contextOk('## H|eading 2', 'H2', 'text');
+    contextOk('## Heading 2|', 'H2', 'text');
+    contextOk('## Heading 2\n|', 'ROOT', 'end');
   })
 
-  test('I HTML context', function() {
-    contextOk('|<i>Italic</i>', 'P', 'text');
-    contextOk('*<|i>Italic</i>', 'I', 'symbol');
-    contextOk('<i>Ita|lic</i>', 'I', 'text');
-    contextOk('<i>Italic<|/i>', 'I', 'symbol');
-    contextOk('<i>Italic</|i>', 'I', 'symbol');
-    contextOk('<i>Italic</i|>', 'I', 'symbol');
-    contextOk('<i>Italic</i>|', 'P', 'text');
-    contextOk('<i>Italic</i>\n|', 'P', 'text');
+   test('Underlined HEADING context', function() {
+     contextOk('|Heading 1\n=========', 'H1', 'text');
+     contextOk('H|eading 1\n=========', 'H1', 'text');
+     contextOk('Heading 1|\n=========', 'H1', 'text');
+     contextOk('Heading 1\n|=========', 'H1', 'symbol');
+     contextOk('Heading 1\n=|========', 'H1', 'symbol');
+     contextOk('Heading 1\n=========|', 'H1', 'symbol');
+     contextOk('Heading 1\n=========\n|', 'ROOT', 'end');
+   })
+
+
+  test('Inline EM contexts', function() {
+    contextOk('|paragraph *emphasized* paragraph', 'P', 'text');
+    contextOk('p|aragraph *emphasized* paragraph', 'P', 'text');
+    contextOk('paragraph |*emphasized* paragraph', 'P', 'text');
+    contextOk('paragraph *|emphasized* paragraph', 'EM', 'text');
+    contextOk('paragraph *e|mphasized* paragraph', 'EM', 'text');
+    contextOk('paragraph *emphasized|* paragraph', 'EM', 'text');
+    contextOk('paragraph *emphasized*| paragraph', 'P', 'text');
+    contextOk('paragraph *emphasized* paragraph|', 'P', 'text');
+    contextOk('paragraph *emphasized* paragraph\n|', 'P', 'text');
+    contextOk('paragraph *emphasized*|\n paragraph', 'P', 'text');
+    contextOk('paragraph *emphasized*\n| paragraph', 'P', 'text');
+    contextOk('paragraph *em|pha\nsized* paragraph', 'EM', 'text');
+    contextOk('paragraph *empha\nsiz|ed* paragraph', 'EM', 'text');
+    contextOk('paragraph *empha\nsized* parag|raph', 'P', 'text');
+  }) 
+
+
+  test('OL in HTML context', function() {
+    contextOk('|<ol>\n<li>One</li>\n<li>Two</li>\n</ol>', 'ROOT', 'text');
+    contextOk('<o|l>\n<li>One</li>\n<li>Two</li>\n</ol>', 'OL', 'symbol');
+    contextOk('<ol>|\n<li>One</li>\n<li>Two</li>\n</ol>', 'OL', 'text');
+    contextOk('<ol>\n<l|i>One</li>\n<li>Two</li>\n</ol>', 'LI', 'symbol');
+    contextOk('<ol>\n<li>|One</li>\n<li>Two</li>\n</ol>', 'LI', 'text');
+    contextOk('<ol>\n<li>One<|/li>\n<li>Two</li>\n</ol>', 'LI', 'symbol');
+    contextOk('<ol>\n<li>One</li|>\n<li>Two</li>\n</ol>', 'LI', 'symbol');
+    contextOk('<ol>\n<li>One</li>\n<li>Two</li>\n<|/ol>', 'OL', 'symbol');
+    contextOk('<ol>\n<li>One</li>\n<li>Two</li>\n</|ol>', 'OL', 'symbol');
+    contextOk('<ol>\n<li>One</li>\n<li>Two</li>\n</ol>|', 'ROOT', 'text');
+  })
+
+
+  module('HTML Elements')
+  test('Inline HTML Elements', function() {
+    contextOk('<|strong>Strong</strong>', 'STRONG', 'symbol');
+    contextOk('<str|ong>Strong</strong>', 'STRONG', 'symbol');
+    contextOk('<strong|>Strong</strong>', 'STRONG', 'symbol');
+    contextOk('<strong>St|rong</strong>', 'STRONG', 'text');
+    contextOk('<strong>Strong<|/strong>', 'STRONG', 'symbol');
+    contextOk('<strong>Strong</|strong>', 'STRONG', 'symbol');
+    contextOk('<strong>Strong</str|ong>', 'STRONG', 'symbol');
+    contextOk('<strong>Strong</strong|>', 'STRONG', 'symbol');
+    contextOk('<strong>Strong</strong>|', 'P', 'text');
   })
 
   test('B HTML context', function() {
@@ -85,57 +202,17 @@
     contextOk('<em>emphasized</em>\n|', 'P', 'text');
   })
 
-  test('STRONG context', function() {
-    contextOk('|**strong**', 'P', 'text');
-    contextOk('*|*strong**', 'STRONG', 'symbol');
-    contextOk('**|strong**', 'STRONG', 'text');
-    contextOk('**s|trong**', 'STRONG', 'text');
-    contextOk('**strong|**', 'STRONG', 'text');
-    contextOk('**strong*|*', 'STRONG', 'symbol');
-    contextOk('**strong**|', 'P', 'text');
-    contextOk('**strong**\n|', 'P', 'text');
-  })
-
-  test('HTML STRONG context', function() {
-    contextOk('|<strong>strong</strong>', 'P', 'text');
-    contextOk('<|strong>strong</strong>', 'STRONG', 'symbol');
-    contextOk('<strong|>strong</strong>', 'STRONG', 'symbol');
-    contextOk('<strong>|strong</em>', 'STRONG', 'text');
-    contextOk('<strong>e|mphasized</em>', 'STRONG', 'text');
-    contextOk('<strong>strong|</em>', 'STRONG', 'text');
-    contextOk('<strong>strong<|/strong>', 'STRONG', 'symbol');
-    contextOk('<strong>strong</|strong>', 'STRONG', 'symbol');
-    contextOk('<strong>strong</s|trong>', 'STRONG', 'symbol');
-    contextOk('<strong>strong</stron|g>', 'STRONG', 'symbol');
-    contextOk('<strong>strong</strong|>', 'STRONG', 'symbol');
-    contextOk('<strong>strong</strong>|', 'P', 'text');
-    contextOk('<strong>strong</strong>\n|', 'P', 'text');
-  })
-
-  test('EM+STRONG context', function() {
-    contextOk('|***emphasized-strong***', 'P', 'text');
-    contextOk('*|**emphasized-strong***', 'STRONG', 'symbol');
-    contextOk('**|*emphasized-strong***', 'STRONG', 'text');
-    contextOk('***|emphasized-strong***', 'EM', 'text');
-    contextOk('***e|mphasized-strong***', 'EM', 'text');
-    contextOk('***emphasized-strong|***', 'EM', 'text');
-    contextOk('***emphasized-strong*|**', 'STRONG', 'text');
-    contextOk('***emphasized-strong**|*', 'STRONG', 'symbol');
-    contextOk('***emphasized-strong***|', 'P', 'text');
-    contextOk('***emphasized-strong***\n|', 'P', 'text');
-  })
-
-  test('A context', function() {
-    contextOk('|[Fascination](http://street.com)', 'P', 'text');
-    contextOk('[|Fascination](http://street.com)', 'A', 'text');
-    contextOk('[F|ascination](http://street.com)', 'A', 'text');
-    contextOk('[Fascination|](http://street.com)', 'A', 'text');
-    contextOk('[Fascination]|(http://street.com)', 'A', 'symbol');
-    contextOk('[Fascination](|http://street.com)', 'A', 'attributes');
-    contextOk('[Fascination](h|ttp://street.com)', 'A', 'attributes');
-    contextOk('[Fascination](http://street.com|)', 'A', 'attributes');
-    contextOk('[Fascination](http://street.com)|', 'P', 'text');
-    contextOk('[Fascination](http://street.com)\n|', 'P', 'text');
+  test('UL in HTML context', function() {
+    contextOk('|<ul>\n<li>One</li>\n<li>Two</li>\n</ul>', 'ROOT', 'text');
+    contextOk('<u|l>\n<li>One</li>\n<li>Two</li>\n</ul>', 'UL', 'symbol');
+    contextOk('<ul>|\n<li>One</li>\n<li>Two</li>\n</ul>', 'UL', 'text');
+    contextOk('<ul>\n<l|i>One</li>\n<li>Two</li>\n</ul>', 'LI', 'symbol');
+    contextOk('<ul>\n<li>|One</li>\n<li>Two</li>\n</ul>', 'LI', 'text');
+    contextOk('<ul>\n<li>One<|/li>\n<li>Two</li>\n</ul>', 'LI', 'symbol');
+    contextOk('<ul>\n<li>One</li|>\n<li>Two</li>\n</ul>', 'LI', 'symbol');
+    contextOk('<ul>\n<li>One</li>\n<li>Two</li>\n<|/ul>', 'UL', 'symbol');
+    contextOk('<ul>\n<li>One</li>\n<li>Two</li>\n</|ul>', 'UL', 'symbol');
+    contextOk('<ul>\n<li>One</li>\n<li>Two</li>\n</ul>|', 'ROOT', 'text');
   })
 
   test('HTML A context', function() {
@@ -170,82 +247,12 @@
     contextOk('<strong>strong</strong>\n|', 'P', 'text');
   })
 
-  test('HEADING context', function() {
-    contextOk('|## Heading 2', 'H2', 'symbol');
-    contextOk('#|# Heading 2', 'H2', 'symbol');
-    contextOk('##| Heading 2', 'H2', 'symbol');
-    contextOk('## |Heading 2', 'H2', 'text');
-    contextOk('## H|eading 2', 'H2', 'text');
-    contextOk('## Heading 2|', 'H2', 'text');
-    contextOk('## Heading 2\n|', 'ROOT', 'end');
-  })
-
-  test('Underlined HEADING context', function() {
-    contextOk('|Heading 1\n=========', 'H1', 'text');
-    contextOk('H|eading 1\n=========', 'H1', 'text');
-    contextOk('Heading 1|\n=========', 'H1', 'text');
-    contextOk('Heading 1\n|=========', 'H1', 'symbol');
-    contextOk('Heading 1\n=|========', 'H1', 'symbol');
-    contextOk('Heading 1\n=========|', 'H1', 'symbol');
-    contextOk('Heading 1\n=========\n|', 'ROOT', 'end');
-  })
-
-  test('Inline EM contexts', function() {
-    contextOk('|paragraph *emphasized* paragraph', 'P', 'text');
-    contextOk('p|aragraph *emphasized* paragraph', 'P', 'text');
-    contextOk('paragraph |*emphasized* paragraph', 'P', 'text');
-    contextOk('paragraph *|emphasized* paragraph', 'EM', 'text');
-    contextOk('paragraph *e|mphasized* paragraph', 'EM', 'text');
-    contextOk('paragraph *emphasized|* paragraph', 'EM', 'text');
-    contextOk('paragraph *emphasized*| paragraph', 'P', 'text');
-    contextOk('paragraph *emphasized* paragraph|', 'P', 'text');
-    contextOk('paragraph *emphasized* paragraph\n|', 'P', 'text');
-    contextOk('paragraph *emphasized*|\n paragraph', 'P', 'text');
-    contextOk('paragraph *emphasized*\n| paragraph', 'P', 'text');
-    contextOk('paragraph *em|pha\nsized* paragraph', 'EM', 'text');
-    contextOk('paragraph *empha\nsiz|ed* paragraph', 'EM', 'text');
-    contextOk('paragraph *empha\nsized* parag|raph', 'P', 'text');
-  }) 
-
-
-  test('OL in HTML context', function() {
-    contextOk('|<ol>\n<li>One</li>\n<li>Two</li>\n</ol>', 'ROOT', 'text');
-    contextOk('<o|l>\n<li>One</li>\n<li>Two</li>\n</ol>', 'OL', 'symbol');
-    contextOk('<ol>|\n<li>One</li>\n<li>Two</li>\n</ol>', 'OL', 'text');
-    contextOk('<ol>\n<l|i>One</li>\n<li>Two</li>\n</ol>', 'LI', 'symbol');
-    contextOk('<ol>\n<li>|One</li>\n<li>Two</li>\n</ol>', 'LI', 'text');
-    contextOk('<ol>\n<li>One<|/li>\n<li>Two</li>\n</ol>', 'LI', 'symbol');
-    contextOk('<ol>\n<li>One</li|>\n<li>Two</li>\n</ol>', 'LI', 'symbol');
-    contextOk('<ol>\n<li>One</li>\n<li>Two</li>\n<|/ol>', 'OL', 'symbol');
-    contextOk('<ol>\n<li>One</li>\n<li>Two</li>\n</|ol>', 'OL', 'symbol');
-    contextOk('<ol>\n<li>One</li>\n<li>Two</li>\n</ol>|', 'ROOT', 'text');
-  })
-
-  test('UL in HTML context', function() {
-    contextOk('|<ul>\n<li>One</li>\n<li>Two</li>\n</ul>', 'ROOT', 'text');
-    contextOk('<u|l>\n<li>One</li>\n<li>Two</li>\n</ul>', 'UL', 'symbol');
-    contextOk('<ul>|\n<li>One</li>\n<li>Two</li>\n</ul>', 'UL', 'text');
-    contextOk('<ul>\n<l|i>One</li>\n<li>Two</li>\n</ul>', 'LI', 'symbol');
-    contextOk('<ul>\n<li>|One</li>\n<li>Two</li>\n</ul>', 'LI', 'text');
-    contextOk('<ul>\n<li>One<|/li>\n<li>Two</li>\n</ul>', 'LI', 'symbol');
-    contextOk('<ul>\n<li>One</li|>\n<li>Two</li>\n</ul>', 'LI', 'symbol');
-    contextOk('<ul>\n<li>One</li>\n<li>Two</li>\n<|/ul>', 'UL', 'symbol');
-    contextOk('<ul>\n<li>One</li>\n<li>Two</li>\n</|ul>', 'UL', 'symbol');
-    contextOk('<ul>\n<li>One</li>\n<li>Two</li>\n</ul>|', 'ROOT', 'text');
-  })
-
-  
-
-  test('BLOCKQUOTE in HTML context', function() {
-    contextOk('|<blockquote>Blockquote</blockquote>', 'ROOT', 'text');
-    contextOk('<bloc|kquote>Blockquote</blockquote>', 'BLOCKQUOTE', 'symbol');
-    contextOk('<blockquote>|Blockquote</blockquote>', 'BLOCKQUOTE', 'text');
-    contextOk('<blockquote>Blockquote|</blockquote>', 'BLOCKQUOTE', 'text');
-    contextOk('<blockquote>Blockquote<|/blockquote>', 'BLOCKQUOTE', 'symbol');
-    contextOk('<blockquote>Blockquote</|blockquote>', 'BLOCKQUOTE', 'symbol');
-    contextOk('<blockquote>Blockquote</blockquote|>', 'BLOCKQUOTE', 'symbol');
-    contextOk('<blockquote>Blockquote</blockquote>|', 'ROOT', 'text');
-  })
+   test('Nested Inlien HTML Elements', function() {
+     contextOk('<strong><em>Strong Emphasized</em><|/strong>', 'STRONG', 'symbol');
+     contextOk('<strong><em>Strong Emphasized</em></s|trong>', 'STRONG', 'symbol');
+     contextOk('<strong><em>Strong Emphasized</|em></strong>', 'EM', 'symbol');
+     contextOk('<strong><em>Strong Emphasized<|/em></strong>', 'EM', 'symbol');
+   })
   </script>
 </body>
 </html>

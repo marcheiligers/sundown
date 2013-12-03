@@ -6,11 +6,15 @@
     var actual = renderer.render(markdown),
         diff = renderer.render(markdown.slice(0, cursor) + CURSOR + markdown.slice(cursor));
         cnode = nodeNameAroundCursor(diff);
-    if(cnode == 'EM' || cnode == 'STRONG' || cnode == 'A' || cnode == 'I' || cnode == 'B'){
-      actual = renderer.render(markdown + 'a'),
-      diff = renderer.render(markdown.slice(0, cursor) + CURSOR + markdown.slice(cursor) + 'a');
-      cnode = nodeNameAroundCursor(diff)
-    }
+        after = markdown.slice(cursor)
+
+      if(cnode == 'EM' || cnode == 'STRONG' || cnode == 'A' || cnode == 'I' || cnode == 'B'){
+        markdown = markdown.replace(/(<\/.*?>)/g, '$1' + 'a')
+        actual = renderer.render(markdown),
+        diff = renderer.render(markdown.slice(0, cursor) + CURSOR + markdown.slice(cursor));
+        cnode = nodeNameAroundCursor(diff)
+      }
+
     console.log('actual', actual)
     console.log('diff', diff.replace(CURSOR, '|'))
     var a = document.createElement('root'), d = document.createElement('root');
@@ -25,7 +29,6 @@
     } else {
       return child(a, d, next, prev, cnode) || { node: a, position: 'end' };
     }
-
   }
 
   function child(a, d, next, prev, cnode) {
@@ -41,13 +44,9 @@
         // the cursor is possibly somewhere in opening/closing symbol
         console.log('the cursor is possibly somewhere in opening/closing symbol') //, a.nodeName, an.parentNode.nodeName, an.nodeName, dn.nodeName, cnode)
         
-        if(dn){
-          if(cnode == dn.nodeName) {
-            return { node: an.parentNode, position: 'symbol' };
-          }
-        }
-
-        if (next.toUpperCase() == '<' + an.nodeName.slice(0,1)){
+        if(dn && cnode == dn.nodeName) {
+          return { node: an.parentNode, position: 'symbol' };
+        }else if (next.toUpperCase() == '<' + an.nodeName.slice(0,1)){
           return { node: a, position: 'text' }
         } else if (next == '' && prev == '>') {
           return { node: a, position: 'text' }
@@ -64,7 +63,6 @@
             break;
           case 'EM':
             if(next[0] == '*' || next[0] == '_') {
-              console.log("We're here")
               if(next == '**' || next == '__') {
                 if(prev == '*') {
                   return { node: a, position: 'text' }
@@ -112,35 +110,31 @@
             break;
         }
 
+
+        console.log('the cursor is in the text somewhere or in a closing tag')
+
         if(ch) {
           return ch;
         } else if(cnode == an.nodeName) {
           return { node: an, position: 'symbol' };
         } else {
-          console.log("This is tst")
           if (prev == '<' && next[0] == '/') {
             return { node: an, position: 'symbol' };
           } else {
             return { node: an, position: 'text' };
           }
         }
-
-        
       }
     }
-
-    //if (ch.prev == '<' && ch.next[0] == '/') {
-     //       return { node: an, position: 'symbol' };
-    //       }
 
     return null;
   }
 
   function nodeNameAroundCursor(html) {
-    var temp = html.replace('&lt;', '<').replace('&gt;', '>'),
-        index = temp.indexOf(CURSOR),
-        before = temp.lastIndexOf('<', index),
-        after = temp.indexOf('>', index);
+    var temp = html.replace('&lt;', '<').replace('&gt;', '>')
+        index = temp.indexOf(CURSOR)
+        before = temp.lastIndexOf('<', index)
+        after = temp.indexOf('>', index)
 
     if(before >= -1 && after > -1) {
       var text =temp.slice(before + 2, after);
