@@ -213,6 +213,7 @@
     contextOk('<ul>\n<li>One</li>\n<li>Two</li>\n<|/ul>', 'UL', 'symbol');
     contextOk('<ul>\n<li>One</li>\n<li>Two</li>\n</|ul>', 'UL', 'symbol');
     contextOk('<ul>\n<li>One</li>\n<li>Two</li>\n</ul>|', 'ROOT', 'text');
+    contextOk('<ul>\n<li>One</li>\n<li>Two</li>\n</ul>| \nText', 'ROOT', 'text');
   })
 
   test('HTML A context', function() {
@@ -249,9 +250,10 @@
 
    test('Nested Inlien HTML Elements', function() {
      contextOk('<strong><em>Strong Emphasized</em><|/strong>', 'STRONG', 'symbol');
-     contextOk('<strong><em>Strong Emphasized</em></s|trong>', 'STRONG', 'symbol');
+     contextOk('<strong><em>Strong Emphasized</em></|strong>', 'STRONG', 'symbol');
      contextOk('<strong><em>Strong Emphasized</|em></strong>', 'EM', 'symbol');
      contextOk('<strong><em>Strong Emphasized<|/em></strong>', 'EM', 'symbol');
+     contextOk('<ol>\n<li></li>\n<li></li>\n</ol>\n|\n<blockquote><em><strong>Text</strong></em></blockquote>', 'ROOT', 'text')
    })
   </script>
 </body>

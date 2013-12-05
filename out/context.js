@@ -1,22 +1,22 @@
 (function(global) {
-  // var CURSOR = '\u0001';
-  var CURSOR = 'XXCURSORXX';
+  var CURSOR = '\u0001';
+  //var CURSOR = 'XXCURSORXX';
 
   function context(renderer, markdown, cursor) {
-    var actual = renderer.render(markdown),
-        diff = renderer.render(markdown.slice(0, cursor) + CURSOR + markdown.slice(cursor));
-        cnode = nodeNameAroundCursor(diff)
+   // var actual = renderer.render(markdown),
+    //    diff = renderer.render(markdown.slice(0, cursor) + CURSOR + markdown.slice(cursor));
+    //    cnode = nodeNameAroundCursor(diff)
 
-        inlineElements = ["address", "article", "aside", "audio", "blockquote", "canvas", "dd", "dl", "fieldset", "figcaption", "figure", "footer", "form", "h1", "h2", "h3", "h4", "h5", "h6", "header", "hgroup", "hr", "noscript", "ol", "output", "p", "pre", "section", "table", "tfoot", "ul", "video"];
-        isBlock = inlineElements.indexOf(cnode.toLowerCase()) > -1
+        //inlineElements = ["address", "article", "aside", "audio", "blockquote", "canvas", "dd", "dl", "fieldset", "figcaption", "figure", "footer", "form", "h1", "h2", "h3", "h4", "h5", "h6", "header", "hgroup", "hr", "noscript", "ol", "output", "p", "pre", "section", "table", "tfoot", "ul", "video"];
+        //isBlock = inlineElements.indexOf(cnode.toLowerCase()) > -1
 
-      if(!isBlock && cnode.indexOf('<') == -1){
-        newMarkdown = markdown.replace(/(<\/.*?>)/g, '$1' + 'a')
-        newMarkdown = newMarkdown.replace(/(<\/[o|u]l>)a/g, '$1')
+      //if(!isBlock && cnode.indexOf('<') == -1){
+    var newMarkdown = markdown.replace(/(<\/.*?>)/g, '$1' + ' ')
         actual = renderer.render(newMarkdown),
         diff = renderer.render(newMarkdown.slice(0, cursor) + CURSOR + newMarkdown.slice(cursor));
-        cnode = nodeNameAroundCursor(diff)
-      }
+        html = renderer.render(markdown.slice(0, cursor) + CURSOR + markdown.slice(cursor));
+        cnode = nodeNameAroundCursor(html)
+      //}
 
     console.log('actual', actual)
     console.log('diff', diff.replace(CURSOR, '|'))
@@ -35,6 +35,7 @@
   }
 
   function child(a, d, next, prev, cnode) {
+
     console.log('-> child', a.nodeName, d.nodeName)
 
     for(var i = 0, l = a.childNodes.length; i < l; i++) {
@@ -46,17 +47,28 @@
       if(!dn || an.nodeName != dn.nodeName) {
         // the cursor is possibly somewhere in opening/closing symbol
         console.log('the cursor is possibly somewhere in opening/closing symbol') //, a.nodeName, an.parentNode.nodeName, an.nodeName, dn.nodeName, cnode)
-        
         if(dn && cnode == dn.nodeName) {
-          return { node: an.parentNode, position: 'symbol' };
+          if (next[0] == " " || next[0] == "" || next[0] == "\n"){
+            return { node: a, position: 'text' }
+          } else {
+            return { node: an.parentNode, position: 'symbol' };
+          }
         }else if (next.toUpperCase() == '<' + an.nodeName.slice(0,1)){
           return { node: a, position: 'text' }
         } else if (next == '' && prev == '>') {
           return { node: a, position: 'text' }
+        } if (an.nodeName != "H2"){
+          if(next[0] == " " || next[0] == "" || next[0] == "\n") {
+            return { node: a, position: 'text' }
+          }
         }
 
         switch(an.nodeName) {
           case 'OL':
+            if (next[0] == " " || next[0] == "" || next[0] == "\n"){
+              return { node: a, position: 'text' }
+            }
+            break;
           case 'UL':
             if(prev != '*') {
               if(next[0] == ' ' || next[0] == '*' || next.match(/\d+/)) {
@@ -96,6 +108,7 @@
             }
             break;
         }
+
         return { node: an, position: 'symbol' };
       } else if(an.cloneNode(false).outerHTML != dn.cloneNode(false).outerHTML) {
         // the cursor is somewhere in the attributes (like the url of a link)
@@ -115,14 +128,19 @@
 
 
         console.log('the cursor is in the text somewhere or in a closing tag')
-
         if(ch) {
-          return ch;
+          if(next == " " || next == "" || next == "\n"){
+            return { node: a, position: 'text' };
+          } else {
+            return ch;
+          }
         } else if(cnode == an.nodeName) {
+          if(next == " " || next == "" || next == "\n"){
+            return { node: a, position: 'text' };
+          } else {
           return { node: an, position: 'symbol' };
+        }
         } else {
-          console.log("prev", prev)
-          console.log("next[0]", next[0])
           if (prev == '<' && next[0] == '/') {
             return { node: an, position: 'symbol' };
           } else {
@@ -131,7 +149,6 @@
         }
       }
     }
-
     return null;
   }
 
