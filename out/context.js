@@ -3,21 +3,55 @@
   //var CURSOR = 'XXCURSORXX';
 
   function context(renderer, markdown, cursor) {
-   // var actual = renderer.render(markdown),
-    //    diff = renderer.render(markdown.slice(0, cursor) + CURSOR + markdown.slice(cursor));
-    //    cnode = nodeNameAroundCursor(diff)
+    var actual = renderer.render(markdown),
+        diff = renderer.render(markdown.slice(0, cursor) + CURSOR + markdown.slice(cursor));
+        cnode = nodeNameAroundCursor(diff)
+        thatNode = nodeAroundCursor(diff)
+        ename = thatNode.replace('/', '')
+        blockElements = ["address", "article", "aside", "audio", "blockquote", "canvas", "dd", "dl", "fieldset", "figcaption", "figure", "footer", "form", "h1", "h2", "h3", "h4", "h5", "h6", "header", "hgroup", "hr", "noscript", "ol", "output", "p", "pre", "section", "table", "tfoot", "ul", "video"];
+        isBlock = blockElements.indexOf(ename.toLowerCase()) > -1
+        
+        if(isBlock && ename != "P"){
+          console.log("isBlock")
+          openTag = "<" + ename.toLowerCase() + ">"
+          closeTag = "</" + ename.toLowerCase() + ">"
+          beforeCursor = markdown.slice(0, cursor)
+          beforeIt = beforeCursor.slice(0, beforeCursor.indexOf(openTag) - 1)
+          actual = renderer.render(markdown),
+          actual = actual.replace(/<p>(.*)<\/p>/, '$1'),
+          diff = renderer.render(markdown.slice(0, cursor) + CURSOR + markdown.slice(cursor));
+          diff = diff.replace(/<p>(.*)<\/p>/, '$1'),
+          html = renderer.render(markdown.slice(0, cursor) + CURSOR + markdown.slice(cursor));
+          cnode = nodeNameAroundCursor(html)
+        } else if (!isBlock && ename.indexOf('<') == -1){
+          console.log("!isBlock")
+          afterCursor = markdown.slice(cursor)
+          markdown  = markdown.slice(0, cursor) + afterCursor.split(afterCursor.lastIndexOf('>'))[0] + " " + '\n' + afterCursor.split('>')[1]
+          actual = renderer.render(markdown),
+          diff = renderer.render(markdown.slice(0, cursor) + CURSOR + markdown.slice(cursor));
+          cnode = nodeNameAroundCursor(diff)
+          ename = nodeAroundCursor(diff)
+        } else {
+          console.log("Normal")
+          console.log(lastClosingTag(markdown))
+          beforeCursor = markdown.slice(0, cursor)
+          lastTag = lastClosingTag(beforeCursor)
 
-        //inlineElements = ["address", "article", "aside", "audio", "blockquote", "canvas", "dd", "dl", "fieldset", "figcaption", "figure", "footer", "form", "h1", "h2", "h3", "h4", "h5", "h6", "header", "hgroup", "hr", "noscript", "ol", "output", "p", "pre", "section", "table", "tfoot", "ul", "video"];
-        //isBlock = inlineElements.indexOf(cnode.toLowerCase()) > -1
+          if(blockElements.indexOf(lastTag) > -1){
+              console.log("block")
+              afterBlock = "\n" + "\n" + "\n" + markdown.slice(beforeCursor.lastIndexOf('>') + 1)
+              console.log(markdown.slice(0, markdown.lastIndexOf('>')))
+              markdown = markdown.slice(0, beforeCursor.lastIndexOf('>') + 1) + afterBlock
+              console.log(markdown)
+            }
+          var actual = renderer.render(markdown),
+              diff = renderer.render(markdown.slice(0, cursor) + CURSOR + markdown.slice(cursor));
+              cnode = nodeNameAroundCursor(diff)
+            
+        }
 
-      //if(!isBlock && cnode.indexOf('<') == -1){
-    var newMarkdown = markdown.replace(/(<\/.*?>)/g, '$1' + ' ')
-        actual = renderer.render(newMarkdown),
-        diff = renderer.render(newMarkdown.slice(0, cursor) + CURSOR + newMarkdown.slice(cursor));
-        html = renderer.render(markdown.slice(0, cursor) + CURSOR + markdown.slice(cursor));
-        cnode = nodeNameAroundCursor(html)
-      //}
-
+    console.log('ename', ename)
+    console.log('cnode', cnode)
     console.log('actual', actual)
     console.log('diff', diff.replace(CURSOR, '|'))
     var a = document.createElement('root'), d = document.createElement('root');
@@ -42,13 +76,13 @@
       var an = a.childNodes[i],
           dn = d.childNodes[i];
 
-      //console.log('--> for:', i, an.nodeName, dn.nodeName);
-      //console.log('       :', i, an.innerHTML, dn.innerHTML, an.innerHTML == dn.innerHTML);
+      console.log('--> for:', i, an.nodeName, dn.nodeName);
+      console.log('       :', i, an.innerHTML, dn.innerHTML, an.innerHTML == dn.innerHTML);
       if(!dn || an.nodeName != dn.nodeName) {
         // the cursor is possibly somewhere in opening/closing symbol
-        console.log('the cursor is possibly somewhere in opening/closing symbol') //, a.nodeName, an.parentNode.nodeName, an.nodeName, dn.nodeName, cnode)
-        if(dn && cnode == dn.nodeName) {
-          if (next[0] == " " || next[0] == "" || next[0] == "\n"){
+        console.log('the cursor is possibly somewhere in opening/closing symbol', a.nodeName, an.parentNode.nodeName, an.nodeName, dn.nodeName, cnode)
+        if(dn && cnode == dn.nodeName) {     
+          if (next[0] == " " || next[0] == "" || next[0] == "\n"){    
             return { node: a, position: 'text' }
           } else {
             return { node: an.parentNode, position: 'symbol' };
@@ -128,20 +162,30 @@
 
 
         console.log('the cursor is in the text somewhere or in a closing tag')
-        if(ch) {
+        console.log("cnode", cnode)
+        if(ch) { 
+          that = cnode.substring(cnode.indexOf("<") + 1);
+          console.log(cnode)
           if(next == " " || next == "" || next == "\n"){
             return { node: a, position: 'text' };
           } else {
             return ch;
           }
         } else if(cnode == an.nodeName) {
+
           if(next == " " || next == "" || next == "\n"){
             return { node: a, position: 'text' };
           } else {
+            console.log("yes")
           return { node: an, position: 'symbol' };
         }
         } else {
+          console.log(a.nodeName)
           if (prev == '<' && next[0] == '/') {
+            return { node: an, position: 'symbol' };
+          }else if (prev == '>' && next == '</') {
+            return { node: an, position: 'symbol' };
+          } else if (prev == '<' && next.toUpperCase() == cnode.slice(0,2)) {
             return { node: an, position: 'symbol' };
           } else {
             return { node: an, position: 'text' };
@@ -162,6 +206,37 @@
       var text =temp.slice(before + 2, after);
           text = text.replace(CURSOR, '');
       return text.replace('/', '').toUpperCase();
+    }
+    return null;
+  }
+
+  function nodeAroundCursor(html) {
+    var temp = html.replace('&lt;', '<').replace('&gt;', '>')
+        index = temp.indexOf(CURSOR)
+        before = temp.lastIndexOf('<', index)
+        after = temp.indexOf('>', index)
+
+    if(before >= -1 && after > -1) {
+      var text =temp.slice(before + 1, after);
+          text = text.replace(CURSOR, '');
+      return text.toUpperCase();
+    }
+    return null;
+  }
+
+    function lastClosingTag(html) {
+      console.log("html ", html)
+    var temp = html.replace('&lt;', '<').replace('&gt;', '>')
+        console.log("temp ", temp)
+        before = temp.lastIndexOf('</')
+        console.log("before ", before)
+        after = temp.lastIndexOf('>')
+        console.log("after ", after)
+
+    if(before >= -1 && after > -1) {
+      var text =temp.slice(before + 2, after);
+          //text = text.replace(CURSOR, '');
+      return text.toLowerCase();
     }
     return null;
   }

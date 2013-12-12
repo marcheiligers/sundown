@@ -255,6 +255,15 @@
      contextOk('<strong><em>Strong Emphasized<|/em></strong>', 'EM', 'symbol');
      contextOk('<ol>\n<li></li>\n<li></li>\n</ol>\n|\n<blockquote><em><strong>Text</strong></em></blockquote>', 'ROOT', 'text')
    })
+
+   test('WIP Tests', function() {
+     contextOk('*My List* <o|l><li>Hello</li></ol>', 'OL', 'symbol');
+     contextOk('*My List* <|ol><li>Hello</li></ol>', 'OL', 'symbol');
+     contextOk('<o|l><li>Hello</li></ol>h', 'OL', 'symbol');
+     contextOk('<ol><li>Hello</li></ol> |h', 'P', 'text');
+     contextOk('<ol><li>Hello</li></ol> h <blockquote>Hey</blockquote> |hey', 'ROOT', 'text');
+   })   
+
   </script>
 </body>
 </html>
