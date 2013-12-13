@@ -160,6 +160,11 @@
     contextOk('<ol>\n<li>One</li>\n<li>Two</li>\n<|/ol>', 'OL', 'symbol');
     contextOk('<ol>\n<li>One</li>\n<li>Two</li>\n</|ol>', 'OL', 'symbol');
     contextOk('<ol>\n<li>One</li>\n<li>Two</li>\n</ol>|', 'ROOT', 'text');
+    contextOk('*My List* <o|l><li>Hello</li></ol>', 'OL', 'symbol');
+    contextOk('*My List* <|ol><li>Hello</li></ol>', 'OL', 'symbol');
+    contextOk('<o|l><li>Hello</li></ol>h', 'OL', 'symbol');
+    contextOk('<ol><li>Hello</li></ol> |h', 'P', 'text');
+    contextOk('<ol><li>Hello</li></ol> h <blockquote>Hey</blockquote> |hey', 'ROOT', 'text');
   })
 
 
@@ -254,15 +259,8 @@
      contextOk('<strong><em>Strong Emphasized</|em></strong>', 'EM', 'symbol');
      contextOk('<strong><em>Strong Emphasized<|/em></strong>', 'EM', 'symbol');
      contextOk('<ol>\n<li></li>\n<li></li>\n</ol>\n|\n<blockquote><em><strong>Text</strong></em></blockquote>', 'ROOT', 'text')
+     contextOk('<ol>\n<li></li>\n<li></li>\n</ol>\n\n<blockquote><em><strong>Text</strong></e|m></blockquote>', 'EM', 'symbol')
    })
-
-   test('WIP Tests', function() {
-     contextOk('*My List* <o|l><li>Hello</li></ol>', 'OL', 'symbol');
-     contextOk('*My List* <|ol><li>Hello</li></ol>', 'OL', 'symbol');
-     contextOk('<o|l><li>Hello</li></ol>h', 'OL', 'symbol');
-     contextOk('<ol><li>Hello</li></ol> |h', 'P', 'text');
-     contextOk('<ol><li>Hello</li></ol> h <blockquote>Hey</blockquote> |hey', 'ROOT', 'text');
-   })   
 
   </script>
 </body>
